@@ -1,6 +1,6 @@
 use blocks::SlackMessage;
 
-mod blocks;
+pub mod blocks;
 
 pub struct Client {
     reqwest_client: reqwest::Client,
