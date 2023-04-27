@@ -14,7 +14,7 @@ pub enum Error {
 }
 
 impl Client {
-    pub async fn new(webhook_url: String) -> Self {
+    pub fn new(webhook_url: String) -> Self {
         let reqwest_client = reqwest::Client::new();
 
         Self {
