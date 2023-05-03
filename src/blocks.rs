@@ -1,22 +1,22 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SimpleSlackMessage {
     pub text: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SlackMessage {
     pub blocks: Vec<Block>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Block {
     #[serde(rename = "type")]
-    type_field: String,
+    type_field: BlockType,
 
     text: Option<Text>,
 
@@ -30,12 +30,26 @@ pub struct Block {
     fields: Vec<Field>,
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum BlockType {
+    Header,
+    Section,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TextType {
+    PlainText,
+    Mrkdwn,
+}
+
 impl Block {
     pub fn new_header(text: String) -> Self {
         Block {
-            type_field: "header".to_string(),
+            type_field: BlockType::Header,
             text: Some(Text {
-                type_field: "plain_text".to_string(),
+                type_field: TextType::PlainText,
                 text,
             }),
             block_id: None,
@@ -46,7 +60,7 @@ impl Block {
 
     pub fn new_text_section(text: Text) -> Self {
         Block {
-            type_field: "section".to_string(),
+            type_field: BlockType::Section,
             text: Some(text),
             block_id: None,
             accessory: None,
@@ -56,7 +70,7 @@ impl Block {
 
     pub fn new_fields_section(fields: Vec<Field>) -> Self {
         Block {
-            type_field: "section".to_string(),
+            type_field: BlockType::Section,
             text: None,
             block_id: None,
             accessory: None,
@@ -65,15 +79,15 @@ impl Block {
     }
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Text {
     #[serde(rename = "type")]
-    pub type_field: String,
+    pub type_field: TextType,
     pub text: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Accessory {
     #[serde(rename = "type")]
@@ -84,10 +98,10 @@ pub struct Accessory {
     pub alt_text: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Field {
     #[serde(rename = "type")]
-    pub type_field: String,
+    pub type_field: TextType,
     pub text: String,
 }
