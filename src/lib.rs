@@ -41,9 +41,11 @@ impl Client {
             .post(&self.webhook_url)
             .json(msg)
             .send()
-            .await?
-            .json::<SlackResponse>()
             .await?;
+
+        dbg!(&response);
+
+        let response = response.json::<SlackResponse>().await?;
 
         if response.ok {
             Ok(())
