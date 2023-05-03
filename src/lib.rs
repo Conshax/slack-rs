@@ -43,17 +43,16 @@ impl Client {
             .send()
             .await?;
 
-        dbg!(&response);
+        //dbg!(&response..text().await);
 
-        let response = response.json::<SlackResponse>().await?;
-
-        if response.ok {
+        if response.status().is_success() {
             Ok(())
         } else {
             Err(Error::SlackError(
                 response
-                    .error
-                    .unwrap_or_else(|| "Unknown error".to_string()),
+                    .text()
+                    .await
+                    .unwrap_or_else(|_| "Unknown error".to_string()),
             ))
         }
     }
