@@ -16,13 +16,53 @@ pub struct SlackMessage {
 #[serde(rename_all = "camelCase")]
 pub struct Block {
     #[serde(rename = "type")]
-    pub type_field: String,
-    pub text: Option<Text>,
+    type_field: String,
+
+    text: Option<Text>,
+
     #[serde(rename = "block_id")]
-    pub block_id: Option<String>,
-    pub accessory: Option<Accessory>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    block_id: Option<String>,
+
+    accessory: Option<Accessory>,
+
     #[serde(default)]
-    pub fields: Vec<Field>,
+    fields: Vec<Field>,
+}
+
+impl Block {
+    pub fn new_header(text: String) -> Self {
+        Block {
+            type_field: "header".to_string(),
+            text: Some(Text {
+                type_field: "plain_text".to_string(),
+                text,
+            }),
+            block_id: None,
+            accessory: None,
+            fields: vec![],
+        }
+    }
+
+    pub fn new_text_section(text: Text) -> Self {
+        Block {
+            type_field: "section".to_string(),
+            text: Some(text),
+            block_id: None,
+            accessory: None,
+            fields: vec![],
+        }
+    }
+
+    pub fn new_fields_section(fields: Vec<Field>) -> Self {
+        Block {
+            type_field: "section".to_string(),
+            text: None,
+            block_id: None,
+            accessory: None,
+            fields,
+        }
+    }
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
