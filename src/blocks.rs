@@ -37,6 +37,13 @@ pub struct Block {
 pub enum BlockType {
     Header,
     Section,
+    Divider,
+    Actions,
+    Context,
+    File,
+    Image,
+    Input,
+    Video,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -53,6 +60,8 @@ impl Block {
             text: Some(Text {
                 type_field: TextType::PlainText,
                 text,
+                emoji: None,
+                verbatim: None,
             }),
             block_id: None,
             accessory: None,
@@ -85,6 +94,16 @@ impl Block {
             fields,
         }
     }
+
+    pub fn new_divider() -> Self {
+        Block {
+            type_field: BlockType::Divider,
+            text: None,
+            block_id: None,
+            accessory: None,
+            fields: vec![],
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -93,6 +112,10 @@ pub struct Text {
     #[serde(rename = "type")]
     pub type_field: TextType,
     pub text: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub emoji: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub verbatim: Option<bool>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
