@@ -1,5 +1,4 @@
-use blocks::SlackMessage;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 pub mod blocks;
 
@@ -12,6 +11,15 @@ pub struct Client {
 pub enum Error {
     #[error(transparent)]
     ReqwestError(#[from] reqwest::Error),
+    #[error("Slack error: {0}")]
+    SlackError(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SlackResponse {
+    ok: bool,
+    error: Option<String>,
+    warning: Option<String>,
 }
 
 impl Client {
@@ -28,12 +36,23 @@ impl Client {
     where
         T: Serialize,
     {
-        self.reqwest_client
+        let response = self
+            .reqwest_client
             .post(&self.webhook_url)
             .json(msg)
             .send()
+            .await?
+            .json::<SlackResponse>()
             .await?;
 
-        Ok(())
+        if response.ok {
+            Ok(())
+        } else {
+            Err(Error::SlackError(
+                response
+                    .error
+                    .unwrap_or_else(|| "Unknown error".to_string()),
+            ))
+        }
     }
 }
