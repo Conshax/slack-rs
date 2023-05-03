@@ -18,15 +18,17 @@ pub struct Block {
     #[serde(rename = "type")]
     type_field: BlockType,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     text: Option<Text>,
 
     #[serde(rename = "block_id")]
     #[serde(skip_serializing_if = "Option::is_none")]
     block_id: Option<String>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     accessory: Option<Accessory>,
 
-    #[serde(default)]
+    #[serde(skip_serializing_if = "Vec::is_empty")]
     fields: Vec<Field>,
 }
 

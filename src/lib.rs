@@ -43,8 +43,6 @@ impl Client {
             .send()
             .await?;
 
-        //dbg!(&response..text().await);
-
         if response.status().is_success() {
             Ok(())
         } else {
