@@ -1,4 +1,5 @@
 use blocks::SlackMessage;
+use serde::Serialize;
 
 pub mod blocks;
 
@@ -23,7 +24,10 @@ impl Client {
         }
     }
 
-    pub async fn post_message(&self, msg: &SlackMessage) -> Result<(), Error> {
+    pub async fn post_message<T>(&self, msg: &T) -> Result<(), Error>
+    where
+        T: Serialize,
+    {
         self.reqwest_client
             .post(&self.webhook_url)
             .json(msg)
