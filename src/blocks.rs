@@ -68,7 +68,13 @@ impl Block {
         }
     }
 
-    pub fn new_fields_section(fields: Vec<Field>) -> Self {
+    pub fn new_fields_section(fields: Vec<(Field, Field)>) -> Self {
+        let fields = fields.into_iter().fold(vec![], |mut acc, (f1, f2)| {
+            acc.push(f1);
+            acc.push(f2);
+            acc
+        });
+
         Block {
             type_field: BlockType::Section,
             text: None,
